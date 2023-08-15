@@ -3,6 +3,6 @@
 
 def schools_by_topic(mongo_collection, topic):
     """Returns topic searched"""
-    searched_topic = mongo_collection.find({"topic": topic})
+    searched_topic = list(mongo_collection.find({"topic": topic}))
 
     return searched_topic
