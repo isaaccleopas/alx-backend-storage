@@ -42,23 +42,6 @@ class Cache():
             return result
         return wrapped
 
-    def replay(method: Callable):
-        """
-        displays the history of calls made by a particular method by retrieving
-        the inputs and outputs saved on the redis store
-        """
-        input_key = "{}:inputs".format(method.__qualname__)
-        output_key = "{}:outputs".format(method.__qualname__)
-
-        inputs = method._redis.lrange(input_key, 0, -1)
-        outputs = method._redis.lrange(output_key, 0, -1)
-
-        print(f"{method.__qualname__} was called {len(inputs)} times:")
-        for args, output in zip(inputs, outputs):
-            args_str = args.decode("utf-8")
-            output_str = output.decode("utf-8")
-            print(f"{method.__qualname__}(*{args_str}) -> {output_str}")
-
     @count_calls
     @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
@@ -92,3 +75,20 @@ class Cache():
         returns the value stored in the redis store at the key as an int
         """
         return self.get(key, fn=int)
+
+def replay(method: Callable):
+    """
+    displays the history of calls made by a particular method by retrieving
+    the inputs and outputs saved on the redis store
+    """
+    input_key = "{}:inputs".format(method.__qualname__)
+    output_key = "{}:outputs".format(method.__qualname__)
+
+    inputs = method._redis.lrange(input_key, 0, -1)
+    outputs = method._redis.lrange(output_key, 0, -1)
+
+    print(f"{method.__qualname__} was called {len(inputs)} times:")
+    for args, output in zip(inputs, outputs):
+        args_str = args.decode("utf-8")
+        output_str = output.decode("utf-8")
+        print(f"{method.__qualname__}(*{args_str}) -> {output_str}")
