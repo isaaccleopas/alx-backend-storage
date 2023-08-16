@@ -26,7 +26,7 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
-def replay(method: Callable) -> None:
+def replay(method: Callable):
     """
     displays the history of calls made by a particular method by retrieving
     the inputs and outputs saved on the redis store
